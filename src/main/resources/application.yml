@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5434/dto
+    username: postgres
+    password: yiman
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+
+server:
+  port: 1212
+
+  error:
+    include-stacktrace: always
