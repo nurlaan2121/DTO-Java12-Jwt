@@ -24,4 +24,13 @@ public interface ProductService {
     List<ProductResponse> findAllFavProducts(Long loginId);
 
     ProductInnerPageResponse findById(Long productId);
+
+    SimpleResponse delete(Long productId);
+
+    SimpleResponse addProdForBasket(Long userId, Long prodId);
+
+    SimpleResponse deleteProdInBasket(Long userId, Long prodId);
+
+    Long getTotalSum(Long userId);
+
 }

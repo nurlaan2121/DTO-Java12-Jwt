@@ -11,6 +11,7 @@ import peaksoft.dto.response.ProductResponse;
 import peaksoft.dto.response.SimpleResponse;
 import peaksoft.enums.Category;
 import peaksoft.service.ProductService;
+
 import java.util.List;
 
 
@@ -31,15 +32,17 @@ public class ProductAPI {
         return productService.findAllProducts();
     }
 
-
-
     @Secured("ADMIN")
     @PostMapping("/{loginID}")
     public SimpleResponse save(@PathVariable Long loginID,
                                @RequestParam Category category,
-                               @RequestBody ProductRequest productRequest
-    ){
+                               @RequestBody ProductRequest productRequest) {
       return   productService.save(loginID, category, productRequest);
+    }
+    @Secured("ADMIN")
+    @DeleteMapping("/{productId}")
+    public SimpleResponse delete(@PathVariable Long productId){
+        return productService.delete(productId);
     }
 
     @Secured({"ADMIN"})
@@ -67,16 +70,16 @@ public class ProductAPI {
     public ProductInnerPageResponse findById(@PathVariable Long productId){
         return productService.findById(productId);
     }
-
-
-
-
-
-
-
-
-
-
-
-
+    @PutMapping("/addNewProdForBasket/{userId}/{prodId}")
+    public SimpleResponse addNewProdForBasket(@PathVariable Long userId,@PathVariable Long prodId){
+        return productService.addProdForBasket(userId,prodId);
+    }
+    @DeleteMapping("/deleteProdInBasket/{userId}/{prodId}")
+    public SimpleResponse deleteProdInBasket(@PathVariable Long userId,@PathVariable Long prodId){
+        return productService.deleteProdInBasket(userId,prodId);
+    }
+    @GetMapping("/totalSumm/{userId}")
+    public Long getTotalSum(@PathVariable Long userId){
+        return productService.getTotalSum(userId);
+    }
 }

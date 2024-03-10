@@ -38,4 +38,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             Product p where p.id = ?1
             """)
     List<Size> getSizes(Long productId);
+
 }

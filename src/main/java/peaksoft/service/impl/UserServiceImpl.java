@@ -9,11 +9,13 @@ import peaksoft.dto.request.SignInRequest;
 import peaksoft.dto.request.SignUpRequest;
 import peaksoft.dto.response.SignResponse;
 import peaksoft.dto.response.SimpleResponse;
+import peaksoft.dto.response.UserRes;
 import peaksoft.enums.Role;
 import peaksoft.model.User;
 import peaksoft.repository.UserRepository;
 import peaksoft.service.UserService;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
@@ -73,6 +75,11 @@ public class UserServiceImpl implements UserService {
                 .email(user.getEmail())
                 .role(user.getRole())
                 .build();
+    }
+
+    @Override
+    public List<UserRes> getAllClients() {
+        return userRepo.getAllClients();
     }
 
 
