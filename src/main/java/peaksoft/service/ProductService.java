@@ -33,4 +33,8 @@ public interface ProductService {
 
     Long getTotalSum(Long userId);
 
+    SimpleResponse update(Category category,ProductRequest productRequest, Long prodId);
+
+    SimpleResponse byProd();
+
 }

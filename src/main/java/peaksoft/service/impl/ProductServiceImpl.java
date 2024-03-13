@@ -3,6 +3,8 @@ package peaksoft.service.impl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import peaksoft.dto.request.AddColourRequest;
 import peaksoft.dto.request.ProductInnerPageResponse;
@@ -20,6 +22,7 @@ import peaksoft.service.ProductService;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -84,18 +87,59 @@ public class ProductServiceImpl implements ProductService {
         throw new NoSuchElementException("Product with name: " + product.getName() + " is  not your basket!");
     }
 
-    @Override
-    public Long getTotalSum(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User with id : " + userId + " Not found"));
-        if (user.getRole().equals(Role.ADMIN)) throw new RuntimeException("Forbidden 403");
-        if (!user.getBasketProducts().isEmpty()) {
-            BigDecimal summ = user.getBasketProducts().get(0).getPrice();
-            for (int i = 1; i < user.getBasketProducts().size(); i++) {
-                summ.add(user.getBasketProducts().get(i).getPrice());
-            }
-            return summ.longValue();
+//    @Override
+//    public Long getTotalSum(Long userId) {
+//        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User with id : " + userId + " Not found"));
+//        if (user.getRole().equals(Role.ADMIN)) throw new RuntimeException("Forbidden 403");
+//        if (!user.getBasketProducts().isEmpty()) {
+//            BigDecimal summ = user.getBasketProducts().get(0).getPrice();
+//            for (int i = 1; i < user.getBasketProducts().size(); i++) {
+//                summ.add(user.getBasketProducts().get(i).getPrice());
+//            }
+//            return summ.longValue();
+//        }
+//        return 0L;
+//    }
+@Override
+public Long getTotalSum(Long userId) {
+    User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User with id : " + userId + " Not found"));
+    if (user.getRole().equals(Role.ADMIN)) throw new RuntimeException("Forbidden 403");
+    if (!user.getBasketProducts().isEmpty()) {
+        BigDecimal summ = BigDecimal.ZERO; // Initialize with zero
+        for (Product product : user.getBasketProducts()) {
+            summ = summ.add(product.getPrice());
         }
-        return 0L;
+        return summ.longValue();
+    }
+    return 0L;
+}
+
+    @Override @Transactional
+    public SimpleResponse update(Category category,ProductRequest productRequest, Long prodId) {
+        Product product = productRepo.findById(prodId).orElseThrow(() -> new BadCredentialsException("This prod not found : " + prodId));
+        product.setName(productRequest.getName());
+        product.setPrice(productRequest.getPrice());
+        product.setImage(productRequest.getImage());
+        product.setQuantity(productRequest.getQuantity());
+        product.setCategory(category);
+        product.setSizes(productRequest.getSizes());
+        product.setColours(Collections.singletonList(productRequest.getColour()));
+        return new SimpleResponse(HttpStatus.OK,"Success");
+    }
+    private User getUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.getByEmail(email);
+    }
+
+    @Override @org.springframework.transaction.annotation.Transactional
+    public SimpleResponse byProd() {
+        User user = getUser();
+        if (user!=null){
+            Long totalSum = getTotalSum(user.getId());
+            user.getBasketProducts().clear();
+            return new SimpleResponse(HttpStatus.ACCEPTED,"All products success by and your balance - " + totalSum);
+        }
+        throw new RuntimeException("User with id not found: " + user.getId());
     }
 
     @Override

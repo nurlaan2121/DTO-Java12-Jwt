@@ -1,6 +1,7 @@
 package peaksoft.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import peaksoft.dto.request.ProductInnerPageResponse;
 import peaksoft.dto.response.ProductResponse;
@@ -38,5 +39,4 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             Product p where p.id = ?1
             """)
     List<Size> getSizes(Long productId);
-
 }

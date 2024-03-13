@@ -1,17 +1,14 @@
-spring:
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/dto
-    username: postgres
-    password: nurlan21
-
-  jpa:
-    hibernate:
-      ddl-auto: create
-    show-sql: true
-
 server:
-  port: 1212
-
-  error:
-    include-stacktrace: always
+    error:
+        include-stacktrace: always
+    port: 1212
+spring:
+    datasource:
+        driver-class-name: org.postgresql.Driver
+        password: nurlan21
+        url: jdbc:postgresql://localhost:5432/dto
+        username: postgres
+    jpa:
+        hibernate:
+            ddl-auto: create
+        show-sql: true

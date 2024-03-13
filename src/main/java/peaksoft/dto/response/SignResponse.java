@@ -9,6 +9,7 @@ import peaksoft.enums.Role;
 @Builder
 public record SignResponse(
         Long id,
+        String token,
         Role role,
         String email
 ){

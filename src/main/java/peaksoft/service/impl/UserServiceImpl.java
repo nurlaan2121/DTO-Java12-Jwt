@@ -13,6 +13,7 @@ import peaksoft.dto.response.UserRes;
 import peaksoft.enums.Role;
 import peaksoft.model.User;
 import peaksoft.repository.UserRepository;
+import peaksoft.security.JwtService;
 import peaksoft.service.UserService;
 
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.NoSuchElementException;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepo;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     @PostConstruct
     private void saveAdmin(){
@@ -70,7 +72,9 @@ public class UserServiceImpl implements UserService {
 
         if (!matches) throw  new RuntimeException("Invalid password");
 
+        String token = jwtService.createToken(user);
         return SignResponse.builder()
+                .token(token)
                 .id(user.getId())
                 .email(user.getEmail())
                 .role(user.getRole())
